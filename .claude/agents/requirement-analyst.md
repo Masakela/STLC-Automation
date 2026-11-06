@@ -1,6 +1,6 @@
 ---
 name: requirement-analyst
-description: STLC Phase 1 — Requirement Analysis. Reviews project requirements (functional and non-functional) and/or explores a live website to identify what needs to be tested, then produces a Requirement Traceability Matrix (RTM) and a list of testable items. Use as the first phase of the /stlc pipeline, or standalone when the user wants an RTM / testability review from requirements or a URL.
+description: STLC Phase 1 — Requirement Analysis. Reviews project requirements (functional and non-functional) and/or explores a live website to identify what needs to be tested, then produces a Requirement Traceability Matrix (RTM) and a list of testable items. Can optionally use Playwright MCP (when available) to reach auth-/flow-gated pages a plain crawl misses. Use as the first phase of the /stlc pipeline, or standalone when the user wants an RTM / testability review from requirements or a URL.
 tools: Read, Write, Edit, Bash, Grep, Glob, WebFetch, WebSearch
 ---
 
@@ -26,6 +26,8 @@ picture of the system — and to make every requirement **traceable**.
      cart/checkout, validation, errors). Use WebFetch to read page copy where it adds detail.
      Mark inferred requirements as such. `site-map.json` is the backbone for both the RTM and
      the Page Object Model, so keep page/element names consistent with it.
+     A plain crawl can't reach pages behind sign-in or multi-step flows — see
+     **Optional: live exploration** below to extend the map to those.
    - Capture both **functional** (what the system does) and **non-functional**
      requirements (performance, security, accessibility, usability, compatibility,
      reliability, localization, compliance).
@@ -40,6 +42,36 @@ picture of the system — and to make every requirement **traceable**.
 
 4. **Build the Requirement Traceability Matrix (RTM).** This is the backbone of the whole
    STLC — every later phase traces back to it.
+
+## Optional: live exploration of gated flows (Playwright MCP)
+
+The deterministic crawl (`analyze-site.js`) is a one-pass, same-origin sweep: it can't sign in,
+dismiss a modal, or step through a wizard, so anything behind auth or an interaction is invisible
+to it. **If Playwright MCP browser tools are available in this session**, use them — after the
+deterministic crawl — to extend coverage:
+
+1. Sign in with **test credentials** on a **test/staging** environment, then walk the key flows the
+   static crawl couldn't reach (post-login dashboard, cart → checkout steps, modals, wizard pages).
+2. Prefer the **deterministic hand-off** — it keeps locator derivation consistent with the rest of
+   the map:
+   - Export the authenticated session as a Playwright `storageState` JSON.
+   - Re-run the analyzer over the now-reachable URLs, merging into the baseline map:
+     `node scripts/analyze-site.js <any-gated-url> --storage-state auth.json
+      --seed <gated-url> [--seed <url> …] --merge qa-artifacts/<run>/site-map.json
+      --out qa-artifacts/<run>/site-map.json`
+     A freshly crawled page overrides the baseline on a URL match (so a page that used to redirect
+     to login is upgraded to its real content); pages not re-crawled are kept. The map records
+     `authenticated: true` and the `seeds` used.
+3. **Fallback** (if you can't export a `storageState`): record each newly discovered page directly
+   into `site-map.json`, following the exact schema and the locator hierarchy
+   (user-facing `getByRole`/`getByLabel`/`getByText` first, then `data-testid`, etc.).
+
+This is **optional and additive** — if the MCP tools aren't present, skip it and proceed with the
+deterministic map. To enable it, add your Playwright MCP browser tools to this agent's `tools:`
+list (the `mcp__playwright__*` tools from your MCP config).
+
+**Guardrails:** only on sites the user owns/may test; **test credentials only**, never real ones;
+never submit real payments or perform destructive/irreversible actions; stay on test/staging.
 
 ## Deliverables (write all of these)
 

@@ -5,14 +5,14 @@
  *
  * Same-origin only, bounded by --max-pages / --max-depth, polite (--delay). It visits each
  * page, enumerates interactive elements, and derives a STABLE locator for each using a
- * resilient-first hierarchy chosen to minimise flaky tests:
- *     data-testid  >  other data-* attribute  >  #id  >  semantic class  >  CSS
- * (test hooks and ids survive refactors; class/CSS are the fallback). Emitted in BOTH
- * TypeScript and Java Playwright form. Override the order with --locator-order.
+ * user-facing-first hierarchy chosen to minimise flaky tests:
+ *     user-facing (getByRole / getByLabel / getByText)  >  data-testid  >  other data-* attribute  >  #id  >  semantic class  >  CSS
+ * (user-facing names and test hooks survive refactors; class/CSS are the fallback). Emitted in
+ * BOTH TypeScript and Java Playwright form. Override the order with --locator-order.
  *
  * Usage:
  *   node analyze-site.js <url> [--max-pages 25] [--max-depth 2] [--delay 300]
- *                        [--locator-order testid,data,id,class,css] [--out site-map.json]
+ *                        [--locator-order userfacing,testid,data,id,class,css] [--out site-map.json]
  *
  * Only crawl sites you own or have permission to test.
  */
@@ -23,11 +23,17 @@ const fs = require('fs');
 
 function arg(n, d) { const i = process.argv.indexOf('--' + n); return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : d; }
 const START = process.argv[2];
-if (!START || START.startsWith('--')) { console.error('Usage: node analyze-site.js <url> [--max-pages N] [--max-depth D] [--delay MS] [--out FILE]'); process.exit(1); }
+if (!START || START.startsWith('--')) { console.error('Usage: node analyze-site.js <url> [--max-pages N] [--max-depth D] [--delay MS]\n       [--storage-state auth.json] [--seed URL]... [--merge site-map.json] [--out FILE]'); process.exit(1); }
 const MAX_PAGES = parseInt(arg('max-pages', '25'), 10);
 const MAX_DEPTH = parseInt(arg('max-depth', '2'), 10);
 const DELAY = parseInt(arg('delay', '300'), 10);
 const OUT = arg('out', 'site-map.json');
+// Optional: reach auth-/flow-gated pages a plain crawl can't. Playwright MCP (or any login) exports a
+// storageState; --seed adds entry URLs only reachable after sign-in; --merge extends an existing map.
+const STORAGE_STATE = arg('storage-state', '');
+const MERGE = arg('merge', '');
+const argsAll = (n) => { const o = []; for (let i = 0; i < process.argv.length; i++) if (process.argv[i] === '--' + n && process.argv[i + 1]) o.push(process.argv[i + 1]); return o; };
+const SEEDS = argsAll('seed').flatMap((s) => s.split(',')).map((s) => s.trim()).filter(Boolean);
 const ORIGIN = new URL(START).origin;
 
 const norm = (u) => { try { const x = new URL(u, ORIGIN); x.hash = ''; return x.href.replace(/\/$/, '') || x.origin; } catch (e) { return null; } };
@@ -123,11 +129,26 @@ function pageName(pathname, title) {
 
 (async () => {
   const browser = await chromium.launch();
-  const page = await (await browser.newContext()).newPage();
-  const queue = [{ url: norm(START), depth: 0 }];
+  const ctxOpts = {};
+  if (STORAGE_STATE) {
+    if (fs.existsSync(STORAGE_STATE)) { ctxOpts.storageState = STORAGE_STATE; console.error('  using storage state (authenticated crawl):', STORAGE_STATE); }
+    else console.error('  storage-state file not found, crawling unauthenticated:', STORAGE_STATE);
+  }
+  const page = await (await browser.newContext(ctxOpts)).newPage();
+  const queue = [{ url: norm(START), depth: 0 }, ...SEEDS.map((s) => ({ url: norm(s), depth: 0 }))];
   const visited = new Set();
   const usedPageNames = {};
   const pages = [];
+  // --merge: load an existing map; this pass may RE-crawl any of its URLs (e.g. authenticated, to
+  // upgrade a page that was previously gated). Freshly crawled pages win; merged-only pages are kept.
+  const mergedByUrl = new Map();
+  if (MERGE && fs.existsSync(MERGE)) {
+    try {
+      const prev = JSON.parse(fs.readFileSync(MERGE, 'utf8'));
+      for (const p of (prev.pages || [])) { const key = norm(p.url || p.path); if (key) mergedByUrl.set(key, p); }
+      console.error(`  loaded ${mergedByUrl.size} existing page(s) from ${MERGE} (fresh crawl overrides on URL match)`);
+    } catch (e) { console.error('  merge skipped (unreadable):', e.message); }
+  }
 
   while (queue.length && pages.length < MAX_PAGES) {
     const { url, depth } = queue.shift();
@@ -201,7 +222,14 @@ function pageName(pathname, title) {
     }
   }
   await browser.close();
-  const map = { startUrl: START, origin: ORIGIN, generatedAt: new Date().toISOString(), pageCount: pages.length, pages };
+  // keep merged pages this pass did not re-crawl (fresh crawl already won on URL match)
+  if (mergedByUrl.size) {
+    const fresh = new Set(pages.map((p) => norm(p.url || p.path)));
+    let kept = 0;
+    for (const [key, p] of mergedByUrl) if (!fresh.has(key)) { pages.push(p); kept++; }
+    if (kept) console.error(`  kept ${kept} merged page(s) not re-crawled this pass`);
+  }
+  const map = { startUrl: START, origin: ORIGIN, generatedAt: new Date().toISOString(), authenticated: !!ctxOpts.storageState, seeds: SEEDS, pageCount: pages.length, pages };
   fs.writeFileSync(OUT, JSON.stringify(map, null, 2));
   console.error(`\nWrote ${OUT} — ${pages.length} page(s), ${pages.reduce((s, p) => s + p.elementCount, 0)} locators.`);
 })().catch((e) => { console.error('fatal:', e.message); process.exit(1); });

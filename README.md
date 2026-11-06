@@ -64,6 +64,25 @@ Inside Claude, in the target repo:
 - A **file** (.md/.docx/.pdf/.txt/.xlsx) or **pasted text** → the requirements source.
 - **Both** → the file is the spec, the URL is the system under test.
 
+### Reaching sign-in and multi-step flows (optional)
+
+A plain crawl can't log in or step through a wizard, so anything behind auth or an interaction is
+invisible to it. When **Playwright MCP** is available, the `requirement-analyst` can drive the site
+live — sign in with **test credentials** on a **test/staging** environment, walk the key flows —
+then extend the map deterministically so locator derivation stays consistent:
+
+```bash
+# after logging in and exporting an authenticated Playwright storageState (auth.json):
+node scripts/analyze-site.js https://app.example.test/dashboard \
+  --storage-state auth.json --seed https://app.example.test/account \
+  --merge qa-artifacts/<run>/site-map.json --out qa-artifacts/<run>/site-map.json
+```
+
+A freshly crawled page overrides the baseline on a URL match (a page that used to redirect to login
+is upgraded to its real content); pages not re-crawled are kept. It's **optional and additive** —
+without the MCP tools, the deterministic crawl is used as-is. Test credentials only; never real
+credentials, payments, or destructive actions.
+
 Everything lands under a timestamped run folder:
 
 ```
@@ -89,6 +108,9 @@ qa-artifacts/<YYYY-MM-DD-HHmm>/
   user-facing-first hierarchy to minimise flaky tests — **user-facing (getByRole / getByLabel /
   getByText) > data-testid > other data-\* > #id > semantic class > CSS** (`[name]` / `:has-text`
   in the CSS tier), configurable with `--locator-order`. Emitted in both TS and Java form.
+  Reaches **auth-/flow-gated pages** too: `--storage-state auth.json` (an authenticated Playwright
+  session), `--seed <url>` (entry URLs not reachable by link), and `--merge <map>` (extend an
+  existing map — a fresh crawl overrides on URL match).
 - **`scripts/generate-pom.js`** — turns `site-map.json` into a **complete Page Object Model +
   skeleton tests in both TypeScript and Java** (`generated-pom/ts/` and `generated-pom/java/`).
   The TS output is a **runnable project** (`playwright.config.ts` + `package.json`), so `/stlc`

@@ -62,6 +62,14 @@ semantic class > CSS** (set with `--locator-order`), in both TS and Java form.
   install chromium && npx playwright test && npm run kpi`. The executor then enriches these
   skeleton tests with real assertions from the test cases and re-runs.
 
+**Auth-/flow-gated pages (optional).** A plain crawl can't sign in or step through a flow. If
+Playwright MCP is available, the requirement-analyst can log in (test creds, test/staging only),
+then extend the map deterministically:
+`node scripts/analyze-site.js <gated-url> --storage-state auth.json --seed <url> --merge qa-artifacts/<run>/site-map.json --out qa-artifacts/<run>/site-map.json`
+— `--storage-state` reuses an authenticated Playwright session, `--seed` adds entry URLs the crawl
+can't reach by link, `--merge` extends an existing map (a fresh crawl overrides on URL match, so a
+page that used to redirect to login is upgraded). See the `requirement-analyst` agent for the flow.
+
 Only crawl sites the user owns or has permission to test. The scripts need Playwright:
 `npm install && npx playwright install chromium` in the project.
 
