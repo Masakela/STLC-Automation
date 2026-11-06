@@ -49,9 +49,9 @@ node scripts/analyze-site.js <url> --max-pages 25 --max-depth 2 --out qa-artifac
 
 `analyze-site.js` visits every same-origin page (bounded by `--max-pages`/`--max-depth`,
 polite via `--delay`) and records each page's interactive elements with a **stable locator**,
-using a resilient-first hierarchy to minimise flaky tests:
-**data-testid > other data-* attribute > #id > semantic class > CSS** (set with `--locator-order`),
-in both TS and Java form.
+using a user-facing-first hierarchy to minimise flaky tests:
+**user-facing (getByRole / getByLabel / getByText) > data-testid > other data-* attribute > #id >
+semantic class > CSS** (set with `--locator-order`), in both TS and Java form.
 
 - The **requirement-analyst** reads `site-map.json` to derive the RTM and testable items.
 - The **test-executor** runs `node scripts/generate-pom.js --map qa-artifacts/<run>/site-map.json

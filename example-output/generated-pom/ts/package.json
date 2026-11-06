@@ -6,6 +6,6 @@
     "kpi": "node ../../scripts/kpi-report.js --pw test-results/results.json --out kpis-out"
   },
   "devDependencies": {
-    "@playwright/test": "^1.47.0"
+    "@playwright/test": "^1.56.0"
   }
 }

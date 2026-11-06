@@ -2,25 +2,30 @@ package com.example.pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 
-/** Home — /  (auto-generated from http://localhost:7099) */
+/** Home — /  (auto-generated from http://127.0.0.1:8143) */
 public class HomePage {
   private final Page page;
-  public final Locator loginLink;
+  public final Locator homeLink;
   public final Locator productsLink;
-  public final Locator searchInput;
-  public final Locator searchButton;
-  public final Locator signUpButton;
-  public final Locator helpCenterLink;
+  public final Locator loginLink;
+  public final Locator cartLink;
+  public final Locator helpLink;
+  public final Locator searchProductsInput;
+  public final Locator getStartedButton;
+  public final Locator button;
 
   public HomePage(Page page) {
     this.page = page;
-    this.loginLink = page.locator("a.nav-link.primary");
-    this.productsLink = page.locator("a:has-text(\"Products\")");
-    this.searchInput = page.locator("#q");
-    this.searchButton = page.getByTestId("go");
-    this.signUpButton = page.locator("[data-qa=\"newsletter-signup\"]");
-    this.helpCenterLink = page.locator("a.footer-link");
+    this.homeLink = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Home"));
+    this.productsLink = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Products"));
+    this.loginLink = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Login"));
+    this.cartLink = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Cart"));
+    this.helpLink = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Help"));
+    this.searchProductsInput = page.getByLabel("Search products");
+    this.getStartedButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Get started"));
+    this.button = page.getByTestId("cart-icon");
   }
 
   public void navigate() {

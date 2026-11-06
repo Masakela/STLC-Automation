@@ -1,227 +1,549 @@
 {
-  "startUrl": "http://localhost:7099/",
-  "origin": "http://localhost:7099",
-  "generatedAt": "2026-11-06T03:40:31.625Z",
-  "pageCount": 6,
+  "startUrl": "http://127.0.0.1:8143/",
+  "origin": "http://127.0.0.1:8143",
+  "generatedAt": "2026-11-06T13:26:46.672Z",
+  "pageCount": 7,
   "pages": [
     {
       "name": "Home",
-      "url": "http://localhost:7099",
+      "url": "http://127.0.0.1:8143",
       "path": "/",
-      "title": "Shop Home",
-      "elementCount": 6,
+      "title": "Home",
+      "elementCount": 8,
       "elements": [
         {
-          "field": "loginLink",
+          "field": "homeLink",
           "role": "link",
-          "text": "Login",
-          "strategy": "class",
-          "ts": "locator('a.nav-link.primary')",
-          "java": "locator(\"a.nav-link.primary\")"
+          "text": "Home",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Home' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Home\"))"
         },
         {
           "field": "productsLink",
           "role": "link",
           "text": "Products",
-          "strategy": "css-text",
-          "ts": "locator('a:has-text(\"Products\")')",
-          "java": "locator(\"a:has-text(\\\"Products\\\")\")"
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Products' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Products\"))"
         },
         {
-          "field": "searchInput",
-          "role": "textbox",
-          "text": "Search",
-          "strategy": "id",
-          "ts": "locator('#q')",
-          "java": "locator(\"#q\")"
-        },
-        {
-          "field": "searchButton",
-          "role": "button",
-          "text": "Search",
-          "strategy": "testid",
-          "ts": "getByTestId('go')",
-          "java": "getByTestId(\"go\")"
-        },
-        {
-          "field": "signUpButton",
-          "role": "button",
-          "text": "Sign up",
-          "strategy": "data-attr",
-          "ts": "locator('[data-qa=\"newsletter-signup\"]')",
-          "java": "locator(\"[data-qa=\\\"newsletter-signup\\\"]\")"
-        },
-        {
-          "field": "helpCenterLink",
+          "field": "loginLink",
           "role": "link",
-          "text": "Help center",
-          "strategy": "class",
-          "ts": "locator('a.footer-link')",
-          "java": "locator(\"a.footer-link\")"
-        }
-      ]
-    },
-    {
-      "name": "Login",
-      "url": "http://localhost:7099/login",
-      "path": "/login",
-      "title": "Login",
-      "elementCount": 5,
-      "elements": [
-        {
-          "field": "homeLink",
-          "role": "link",
-          "text": "Home",
-          "strategy": "css-text",
-          "ts": "locator('a:has-text(\"Home\")')",
-          "java": "locator(\"a:has-text(\\\"Home\\\")\")"
-        },
-        {
-          "field": "emailInput",
-          "role": "textbox",
-          "text": "Email",
-          "strategy": "id",
-          "ts": "locator('#email')",
-          "java": "locator(\"#email\")"
-        },
-        {
-          "field": "passwordInput",
-          "role": "textbox",
-          "text": "Password",
-          "strategy": "id",
-          "ts": "locator('#password')",
-          "java": "locator(\"#password\")"
-        },
-        {
-          "field": "signInButton",
-          "role": "button",
-          "text": "Sign in",
-          "strategy": "testid",
-          "ts": "getByTestId('signin')",
-          "java": "getByTestId(\"signin\")"
-        },
-        {
-          "field": "forgotPasswordLink",
-          "role": "link",
-          "text": "Forgot password?",
-          "strategy": "css-text",
-          "ts": "locator('a:has-text(\"Forgot password?\")')",
-          "java": "locator(\"a:has-text(\\\"Forgot password?\\\")\")"
-        }
-      ]
-    },
-    {
-      "name": "Products",
-      "url": "http://localhost:7099/products",
-      "path": "/products",
-      "title": "Products",
-      "elementCount": 5,
-      "elements": [
-        {
-          "field": "homeLink",
-          "role": "link",
-          "text": "Home",
-          "strategy": "css-text",
-          "ts": "locator('a:has-text(\"Home\")')",
-          "java": "locator(\"a:has-text(\\\"Home\\\")\")"
+          "text": "Login",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Login' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Login\"))"
         },
         {
           "field": "cartLink",
           "role": "link",
           "text": "Cart",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Cart' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Cart\"))"
+        },
+        {
+          "field": "helpLink",
+          "role": "link",
+          "text": "Help",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Help' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Help\"))"
+        },
+        {
+          "field": "searchProductsInput",
+          "role": "textbox",
+          "text": "Search products",
+          "strategy": "label",
+          "ts": "getByLabel('Search products')",
+          "java": "getByLabel(\"Search products\")"
+        },
+        {
+          "field": "getStartedButton",
+          "role": "button",
+          "text": "Get started",
+          "strategy": "role",
+          "ts": "getByRole('button', { name: 'Get started' })",
+          "java": "getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(\"Get started\"))"
+        },
+        {
+          "field": "button",
+          "role": "button",
+          "text": "",
           "strategy": "testid",
-          "ts": "getByTestId('cart-link')",
-          "java": "getByTestId(\"cart-link\")"
+          "ts": "getByTestId('cart-icon')",
+          "java": "getByTestId(\"cart-icon\")"
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "url": "http://127.0.0.1:8143/products.html",
+      "path": "/products.html",
+      "title": "Products",
+      "elementCount": 9,
+      "elements": [
+        {
+          "field": "homeLink",
+          "role": "link",
+          "text": "Home",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Home' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Home\"))"
+        },
+        {
+          "field": "productsLink",
+          "role": "link",
+          "text": "Products",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Products' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Products\"))"
+        },
+        {
+          "field": "loginLink",
+          "role": "link",
+          "text": "Login",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Login' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Login\"))"
+        },
+        {
+          "field": "cartLink",
+          "role": "link",
+          "text": "Cart",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Cart' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Cart\"))"
+        },
+        {
+          "field": "helpLink",
+          "role": "link",
+          "text": "Help",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Help' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Help\"))"
         },
         {
           "field": "sortBySelect",
           "role": "combobox",
           "text": "PriceName",
-          "strategy": "id",
-          "ts": "locator('#sort')",
-          "java": "locator(\"#sort\")"
+          "strategy": "label",
+          "ts": "getByLabel('Sort by')",
+          "java": "getByLabel(\"Sort by\")"
         },
         {
-          "field": "addBackpackButton",
+          "field": "addToCartButton",
           "role": "button",
-          "text": "Add Backpack",
-          "strategy": "testid",
-          "ts": "getByTestId('add-backpack')",
-          "java": "getByTestId(\"add-backpack\")"
+          "text": "Add to cart",
+          "strategy": "role",
+          "ts": "getByRole('button', { name: 'Add to cart' })",
+          "java": "getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(\"Add to cart\"))"
         },
         {
-          "field": "addBikeButton",
+          "field": "button",
           "role": "button",
-          "text": "Add Bike",
-          "strategy": "testid",
-          "ts": "getByTestId('add-bike')",
-          "java": "getByTestId(\"add-bike\")"
+          "text": "",
+          "strategy": "data-attr",
+          "ts": "locator('[data-qa=\"filter-open\"]')",
+          "java": "locator(\"[data-qa=\\\"filter-open\\\"]\")"
+        },
+        {
+          "field": "loadMoreButton",
+          "role": "button",
+          "text": "Load more",
+          "strategy": "role",
+          "ts": "getByRole('button', { name: 'Load more' })",
+          "java": "getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(\"Load more\"))"
         }
       ]
     },
     {
-      "name": "Help",
-      "url": "http://localhost:7099/help",
-      "path": "/help",
-      "title": "",
-      "elementCount": 0,
-      "elements": []
-    },
-    {
-      "name": "Forgot",
-      "url": "http://localhost:7099/forgot",
-      "path": "/forgot",
-      "title": "Forgot",
-      "elementCount": 3,
+      "name": "Login",
+      "url": "http://127.0.0.1:8143/login.html",
+      "path": "/login.html",
+      "title": "Login",
+      "elementCount": 10,
       "elements": [
         {
           "field": "homeLink",
           "role": "link",
           "text": "Home",
-          "strategy": "css-text",
-          "ts": "locator('a:has-text(\"Home\")')",
-          "java": "locator(\"a:has-text(\\\"Home\\\")\")"
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Home' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Home\"))"
+        },
+        {
+          "field": "productsLink",
+          "role": "link",
+          "text": "Products",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Products' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Products\"))"
+        },
+        {
+          "field": "loginLink",
+          "role": "link",
+          "text": "Login",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Login' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Login\"))"
+        },
+        {
+          "field": "cartLink",
+          "role": "link",
+          "text": "Cart",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Cart' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Cart\"))"
+        },
+        {
+          "field": "helpLink",
+          "role": "link",
+          "text": "Help",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Help' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Help\"))"
         },
         {
           "field": "emailInput",
           "role": "textbox",
           "text": "Email",
-          "strategy": "id",
-          "ts": "locator('#em')",
-          "java": "locator(\"#em\")"
+          "strategy": "label",
+          "ts": "getByLabel('Email')",
+          "java": "getByLabel(\"Email\")"
         },
         {
-          "field": "sendResetButton",
+          "field": "passwordInput",
+          "role": "textbox",
+          "text": "Password",
+          "strategy": "label",
+          "ts": "getByLabel('Password')",
+          "java": "getByLabel(\"Password\")"
+        },
+        {
+          "field": "couponCodeInput",
+          "role": "textbox",
+          "text": "Coupon code",
+          "strategy": "placeholder",
+          "ts": "getByPlaceholder('Coupon code')",
+          "java": "getByPlaceholder(\"Coupon code\")"
+        },
+        {
+          "field": "signInButton",
           "role": "button",
-          "text": "Send reset",
-          "strategy": "testid",
-          "ts": "getByTestId('reset')",
-          "java": "getByTestId(\"reset\")"
+          "text": "Sign in",
+          "strategy": "role",
+          "ts": "getByRole('button', { name: 'Sign in' })",
+          "java": "getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(\"Sign in\"))"
+        },
+        {
+          "field": "forgotPasswordLink",
+          "role": "link",
+          "text": "Forgot password?",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Forgot password?' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Forgot password?\"))"
         }
       ]
     },
     {
       "name": "Cart",
-      "url": "http://localhost:7099/cart",
-      "path": "/cart",
+      "url": "http://127.0.0.1:8143/cart.html",
+      "path": "/cart.html",
       "title": "Cart",
-      "elementCount": 2,
+      "elementCount": 8,
       "elements": [
         {
           "field": "homeLink",
           "role": "link",
           "text": "Home",
-          "strategy": "css-text",
-          "ts": "locator('a:has-text(\"Home\")')",
-          "java": "locator(\"a:has-text(\\\"Home\\\")\")"
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Home' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Home\"))"
+        },
+        {
+          "field": "productsLink",
+          "role": "link",
+          "text": "Products",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Products' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Products\"))"
+        },
+        {
+          "field": "loginLink",
+          "role": "link",
+          "text": "Login",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Login' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Login\"))"
+        },
+        {
+          "field": "cartLink",
+          "role": "link",
+          "text": "Cart",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Cart' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Cart\"))"
+        },
+        {
+          "field": "helpLink",
+          "role": "link",
+          "text": "Help",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Help' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Help\"))"
+        },
+        {
+          "field": "promoCodeInput",
+          "role": "textbox",
+          "text": "Promo code",
+          "strategy": "placeholder",
+          "ts": "getByPlaceholder('Promo code')",
+          "java": "getByPlaceholder(\"Promo code\")"
+        },
+        {
+          "field": "button",
+          "role": "button",
+          "text": "",
+          "strategy": "testid",
+          "ts": "getByTestId('remove-item')",
+          "java": "getByTestId(\"remove-item\")"
         },
         {
           "field": "checkoutButton",
           "role": "button",
           "text": "Checkout",
-          "strategy": "testid",
-          "ts": "getByTestId('checkout')",
-          "java": "getByTestId(\"checkout\")"
+          "strategy": "role",
+          "ts": "getByRole('button', { name: 'Checkout' })",
+          "java": "getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(\"Checkout\"))"
+        }
+      ]
+    },
+    {
+      "name": "Help",
+      "url": "http://127.0.0.1:8143/help.html",
+      "path": "/help.html",
+      "title": "Help",
+      "elementCount": 8,
+      "elements": [
+        {
+          "field": "homeLink",
+          "role": "link",
+          "text": "Home",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Home' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Home\"))"
+        },
+        {
+          "field": "productsLink",
+          "role": "link",
+          "text": "Products",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Products' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Products\"))"
+        },
+        {
+          "field": "loginLink",
+          "role": "link",
+          "text": "Login",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Login' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Login\"))"
+        },
+        {
+          "field": "cartLink",
+          "role": "link",
+          "text": "Cart",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Cart' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Cart\"))"
+        },
+        {
+          "field": "helpLink",
+          "role": "link",
+          "text": "Help",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Help' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Help\"))"
+        },
+        {
+          "field": "contactSupportLink",
+          "role": "link",
+          "text": "Contact support",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Contact support' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Contact support\"))"
+        },
+        {
+          "field": "faqToggleButton",
+          "role": "button",
+          "text": "",
+          "strategy": "id",
+          "ts": "locator('#faq-toggle')",
+          "java": "locator(\"#faq-toggle\")"
+        },
+        {
+          "field": "yourFeedbackInput",
+          "role": "textbox",
+          "text": "Your feedback",
+          "strategy": "label",
+          "ts": "getByLabel('Your feedback')",
+          "java": "getByLabel(\"Your feedback\")"
+        }
+      ]
+    },
+    {
+      "name": "Forgot",
+      "url": "http://127.0.0.1:8143/forgot.html",
+      "path": "/forgot.html",
+      "title": "Forgot password",
+      "elementCount": 8,
+      "elements": [
+        {
+          "field": "homeLink",
+          "role": "link",
+          "text": "Home",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Home' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Home\"))"
+        },
+        {
+          "field": "productsLink",
+          "role": "link",
+          "text": "Products",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Products' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Products\"))"
+        },
+        {
+          "field": "loginLink",
+          "role": "link",
+          "text": "Login",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Login' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Login\"))"
+        },
+        {
+          "field": "cartLink",
+          "role": "link",
+          "text": "Cart",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Cart' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Cart\"))"
+        },
+        {
+          "field": "helpLink",
+          "role": "link",
+          "text": "Help",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Help' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Help\"))"
+        },
+        {
+          "field": "emailInput",
+          "role": "textbox",
+          "text": "Email",
+          "strategy": "label",
+          "ts": "getByLabel('Email')",
+          "java": "getByLabel(\"Email\")"
+        },
+        {
+          "field": "sendResetLinkButton",
+          "role": "button",
+          "text": "Send reset link",
+          "strategy": "role",
+          "ts": "getByRole('button', { name: 'Send reset link' })",
+          "java": "getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(\"Send reset link\"))"
+        },
+        {
+          "field": "backToLoginLink",
+          "role": "link",
+          "text": "Back to login",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Back to login' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Back to login\"))"
+        }
+      ]
+    },
+    {
+      "name": "Contact",
+      "url": "http://127.0.0.1:8143/contact.html",
+      "path": "/contact.html",
+      "title": "Contact support",
+      "elementCount": 9,
+      "elements": [
+        {
+          "field": "homeLink",
+          "role": "link",
+          "text": "Home",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Home' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Home\"))"
+        },
+        {
+          "field": "productsLink",
+          "role": "link",
+          "text": "Products",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Products' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Products\"))"
+        },
+        {
+          "field": "loginLink",
+          "role": "link",
+          "text": "Login",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Login' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Login\"))"
+        },
+        {
+          "field": "cartLink",
+          "role": "link",
+          "text": "Cart",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Cart' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Cart\"))"
+        },
+        {
+          "field": "helpLink",
+          "role": "link",
+          "text": "Help",
+          "strategy": "role",
+          "ts": "getByRole('link', { name: 'Help' })",
+          "java": "getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(\"Help\"))"
+        },
+        {
+          "field": "fullNameInput",
+          "role": "textbox",
+          "text": "Full name",
+          "strategy": "label",
+          "ts": "getByLabel('Full name')",
+          "java": "getByLabel(\"Full name\")"
+        },
+        {
+          "field": "emailInput",
+          "role": "textbox",
+          "text": "Email",
+          "strategy": "label",
+          "ts": "getByLabel('Email')",
+          "java": "getByLabel(\"Email\")"
+        },
+        {
+          "field": "messageInput",
+          "role": "textbox",
+          "text": "Message",
+          "strategy": "label",
+          "ts": "getByLabel('Message')",
+          "java": "getByLabel(\"Message\")"
+        },
+        {
+          "field": "sendMessageButton",
+          "role": "button",
+          "text": "Send message",
+          "strategy": "role",
+          "ts": "getByRole('button', { name: 'Send message' })",
+          "java": "getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(\"Send message\"))"
         }
       ]
     }

@@ -1,14 +1,15 @@
 # Generated Page Object Model
 
-Source: http://localhost:7099/ · 6 page(s) crawled · generated 2026-11-06T03:40:31.665Z
+Source: http://127.0.0.1:8143/ · 7 page(s) crawled · generated 2026-11-06T13:26:46.701Z
 
 ## Pages
-- **HomePage** — `/` — 6 locators (ts + java)
-- **LoginPage** — `/login` — 5 locators (ts + java)
-- **ProductsPage** — `/products` — 5 locators (ts + java)
-- HelpPage — (no addressable elements, skipped)
-- **ForgotPage** — `/forgot` — 3 locators (ts + java)
-- **CartPage** — `/cart` — 2 locators (ts + java)
+- **HomePage** — `/` — 8 locators (ts + java)
+- **ProductsPage** — `/products.html` — 9 locators (ts + java)
+- **LoginPage** — `/login.html` — 10 locators (ts + java)
+- **CartPage** — `/cart.html` — 8 locators (ts + java)
+- **HelpPage** — `/help.html` — 8 locators (ts + java)
+- **ForgotPage** — `/forgot.html` — 8 locators (ts + java)
+- **ContactPage** — `/contact.html` — 9 locators (ts + java)
 
 ## Layout
 - `ts/pages/*.page.ts` — TypeScript page objects (@playwright/test)
@@ -17,6 +18,6 @@ Source: http://localhost:7099/ · 6 page(s) crawled · generated 2026-11-06T03:4
 - `java/src/test/java/com/example/tests/*Test.java` — skeleton TestNG tests
 
 ## Notes
-Locators are auto-derived (getByTestId > getByRole > getByLabel > #id > [name] > css). They are a
+Locators are auto-derived (user-facing getByRole/getByLabel/getByText > getByTestId > data-* > #id > class > css). They are a
 **reviewed starting point** — confirm the important ones and replace the skeleton assertions with
 real behavior. The STLC pipeline maps each page/flow to requirements and fills these tests.

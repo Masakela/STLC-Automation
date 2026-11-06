@@ -157,7 +157,7 @@ ${summary.join('\n')}
 - \`java/src/test/java/com/example/tests/*Test.java\` — skeleton TestNG tests
 
 ## Notes
-Locators are auto-derived (getByTestId > getByRole > getByLabel > #id > [name] > css). They are a
+Locators are auto-derived (user-facing getByRole/getByLabel/getByText > getByTestId > data-* > #id > class > css). They are a
 **reviewed starting point** — confirm the important ones and replace the skeleton assertions with
 real behavior. The STLC pipeline maps each page/flow to requirements and fills these tests.
 `;

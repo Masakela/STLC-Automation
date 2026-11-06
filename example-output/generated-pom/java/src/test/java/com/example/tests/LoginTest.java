@@ -10,7 +10,7 @@ public class LoginTest {
   @BeforeMethod public void setUp() {
     pw = Playwright.create();
     browser = pw.chromium().launch();
-    page = browser.newContext(new Browser.NewContextOptions().setBaseURL("http://localhost:7099")).newPage();
+    page = browser.newContext(new Browser.NewContextOptions().setBaseURL("http://127.0.0.1:8143")).newPage();
   }
   @AfterMethod public void tearDown() { if (browser != null) browser.close(); if (pw != null) pw.close(); }
 

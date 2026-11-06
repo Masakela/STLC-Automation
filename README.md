@@ -14,6 +14,12 @@ real deliverable that feeds the next:
 The RTM is the spine: every requirement traces to testable items → test cases → execution
 results, so coverage gaps are visible at every step.
 
+**Flaky-resistant by design:** every generated locator leads with a *user-facing* hook —
+`getByRole`, `getByLabel`, `getByText` — the way a real user (and a screen reader) finds an
+element, falling back to test ids (`data-testid`) and then structural selectors only when no
+accessible name exists. Tests survive restyles, reorders, and re-wraps, and fail only when
+behavior actually breaks. See [Locator strategy](#locator-strategy-user-facing-first-to-cut-flaky-tests).
+
 ## Install
 
 Copy the agents and the command into the `.claude/` of the repo you want to test (or into
@@ -80,9 +86,9 @@ qa-artifacts/<YYYY-MM-DD-HHmm>/
   the agents base their output on, so format is consistent run to run.
 - **`scripts/analyze-site.js`** — crawls a URL (same-origin, bounded, polite) into
   `site-map.json`: every page and its interactive elements with a **stable locator**, using a
-  resilient-first hierarchy to minimise flaky tests — **data-testid > other data-\* > #id >
-  semantic class > CSS** (`[name]` / `:has-text` in the CSS tier), configurable with
-  `--locator-order`. Emitted in both TS and Java form.
+  user-facing-first hierarchy to minimise flaky tests — **user-facing (getByRole / getByLabel /
+  getByText) > data-testid > other data-\* > #id > semantic class > CSS** (`[name]` / `:has-text`
+  in the CSS tier), configurable with `--locator-order`. Emitted in both TS and Java form.
 - **`scripts/generate-pom.js`** — turns `site-map.json` into a **complete Page Object Model +
   skeleton tests in both TypeScript and Java** (`generated-pom/ts/` and `generated-pom/java/`).
   The TS output is a **runnable project** (`playwright.config.ts` + `package.json`), so `/stlc`
@@ -90,7 +96,7 @@ qa-artifacts/<YYYY-MM-DD-HHmm>/
 - **`scripts/kpi-report.js`** — the zero-dependency KPI dashboard generator (pass rate,
   totals, flaky, per-suite breakdown) — the same one used by the main projects and templates.
 
-## Locator strategy (resilient-first, to cut flaky tests)
+## Locator strategy (user-facing first, to cut flaky tests)
 
 **The objective: stop tests failing for the wrong reasons.** Most "flaky" UI failures aren't real
 bugs — they're selectors that broke when the markup moved. A positional CSS path like
@@ -98,40 +104,49 @@ bugs — they're selectors that broke when the markup moved. A positional CSS pa
 restyles, reorders, or re-wraps the page — so the test goes red even though the feature still works.
 Every false failure costs trust and triage time, and teams end up ignoring or disabling the suite.
 This hierarchy prevents that by binding each locator to the most **stable, intent-revealing** hook
-available — a test id or an id that says *what* the element is, not *where* it sits or *how* it
-looks — and only falling back to presentational selectors (class, then CSS) when nothing better
-exists. The payoff: tests that survive refactors and fail only when behavior actually breaks.
+available. It leads with **user-facing** locators — `getByRole`, `getByLabel`, `getByText` — which
+find an element the way a real person (and a screen reader) does: by its role and its visible,
+accessible name, not by *where* it sits or *how* it looks. Those are the most resilient to
+refactors, they double as an accessibility check, and they're [Playwright's own recommended
+priority](https://playwright.dev/docs/locators#locating-elements). When no stable accessible name
+exists, it falls back to a test hook (`data-testid`), then an id, and only then to presentational
+selectors (class, then CSS). The payoff: tests that survive refactors and fail only when behavior
+actually breaks.
 
 `analyze-site.js` applies this by deriving one locator per element, walking the hierarchy from the
-most stable hook to the least:
+most user-facing/stable hook to the least:
 
 | Tier | Looks for | Emits (TypeScript → Java) |
 |------|-----------|---------------------------|
-| 1. **testid** | `data-testid` / `data-test` / `data-test-id` | `getByTestId('x')` → `getByTestId("x")` |
-| 2. **data-\*** | any other `data-*` attribute | `locator('[data-qa="v"]')` |
-| 3. **id** | `id` | `locator('#id')` |
-| 4. **class** | a stable semantic class (utility/hashed/state classes skipped) | `locator('tag.class')` |
-| 5. **CSS** | `[name="v"]`, then `tag:has-text("…")` for text-only links/buttons, then `tag[type]` | `locator('…')` |
+| 1. **user-facing** | an ARIA role + accessible name, a form field's `<label>`, its `placeholder`, or visible link/button text | `getByRole('button', { name: 'Submit' })` · `getByLabel('Email')` · `getByText('Home')` |
+| 2. **testid** | `data-testid` / `data-test` / `data-test-id` | `getByTestId('x')` → `getByTestId("x")` |
+| 3. **data-\*** | any other `data-*` attribute | `locator('[data-qa="v"]')` |
+| 4. **id** | `id` | `locator('#id')` |
+| 5. **class** | a stable semantic class (utility/hashed/state classes skipped) | `locator('tag.class')` |
+| 6. **CSS** | `[name="v"]`, then `tag:has-text("…")` for text-only links/buttons, then `tag[type]` | `locator('…')` |
 
-The **first tier that addresses an element wins**. Test hooks (`data-*`) and ids survive
-refactors; class and CSS are the fallback. Skipped class patterns include utilities (`px-4`,
+The **first tier that addresses an element wins**. User-facing names and test hooks survive
+refactors; class and CSS are the fallback. The user-facing tier only fires when a **specific**
+name is available (so it never emits a too-broad `getByRole('button')` with no name — that element
+falls through to the next tier instead). Skipped class patterns include utilities (`px-4`,
 `mt-2`), state (`active`, `is-open`, `hidden`, `selected`), and hashed/scoped names
 (`css-1a2b3c`, `sc-ab12`, `svelte-…`, `ng-…`, `v-…`) — so a class locator is meaningful, not noise.
 
 **Override the order per run** (reorder or drop tiers):
 
 ```bash
-# prefer id over data-* attributes:
-node scripts/analyze-site.js <url> --locator-order testid,id,data,class,css
-# never fall back to class, go straight to CSS:
-node scripts/analyze-site.js <url> --locator-order testid,data,id,css
+# prefer test ids over user-facing names (e.g. a heavily localized UI):
+node scripts/analyze-site.js <url> --locator-order testid,userfacing,data,id,class,css
+# user-facing names, then straight to CSS — never class:
+node scripts/analyze-site.js <url> --locator-order userfacing,css
 ```
 
-The default is `testid,data,id,class,css`.
+The default is `userfacing,testid,data,id,class,css`.
 
-> Auto-derived locators are a **reviewed starting point** — confirm the important ones. The best
-> way to make them rock-solid is to add a `data-testid` in the app: the analyzer then locks onto
-> Tier 1 on the next run, and your tests stop caring about markup changes entirely.
+> Auto-derived locators are a **reviewed starting point** — confirm the important ones. Giving a
+> control a clear, stable accessible name (a real `<label>`, button text, or `aria-label`) keeps it
+> on Tier 1; adding a `data-testid` is the reliable fallback when the visible text is dynamic or
+> localized — either way your tests stop caring about markup changes.
 
 ## How it fits your other projects
 

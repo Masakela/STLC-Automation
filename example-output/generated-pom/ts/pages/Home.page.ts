@@ -1,23 +1,27 @@
 import { Page, Locator } from '@playwright/test';
 
-/** Home — /  (auto-generated from http://localhost:7099) */
+/** Home — /  (auto-generated from http://127.0.0.1:8143) */
 export class HomePage {
   readonly page: Page;
-  readonly loginLink: Locator;
+  readonly homeLink: Locator;
   readonly productsLink: Locator;
-  readonly searchInput: Locator;
-  readonly searchButton: Locator;
-  readonly signUpButton: Locator;
-  readonly helpCenterLink: Locator;
+  readonly loginLink: Locator;
+  readonly cartLink: Locator;
+  readonly helpLink: Locator;
+  readonly searchProductsInput: Locator;
+  readonly getStartedButton: Locator;
+  readonly button: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    this.loginLink = page.locator('a.nav-link.primary');
-    this.productsLink = page.locator('a:has-text("Products")');
-    this.searchInput = page.locator('#q');
-    this.searchButton = page.getByTestId('go');
-    this.signUpButton = page.locator('[data-qa="newsletter-signup"]');
-    this.helpCenterLink = page.locator('a.footer-link');
+    this.homeLink = page.getByRole('link', { name: 'Home' });
+    this.productsLink = page.getByRole('link', { name: 'Products' });
+    this.loginLink = page.getByRole('link', { name: 'Login' });
+    this.cartLink = page.getByRole('link', { name: 'Cart' });
+    this.helpLink = page.getByRole('link', { name: 'Help' });
+    this.searchProductsInput = page.getByLabel('Search products');
+    this.getStartedButton = page.getByRole('button', { name: 'Get started' });
+    this.button = page.getByTestId('cart-icon');
   }
 
   async goto() {

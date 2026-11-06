@@ -27,7 +27,7 @@ cycle: defects mapped to cases and requirements, pass/fail, and a KPI dashboard 
      (from Phase 0), run
      `node scripts/generate-pom.js --map qa-artifacts/<run>/site-map.json --out <project>/generated-pom`
      to emit a **complete POM + skeleton tests in both TypeScript and Java** from the crawled
-     pages (locators follow the resilient hierarchy data-testid > data-* > #id > class > CSS).
+     pages (locators follow the hierarchy user-facing getByRole/getByLabel/getByText > data-testid > data-* > #id > class > CSS).
      The TS output is a runnable project — **auto-run the smoke suite** first
      (`cd <project>/generated-pom/ts && npm install && npx playwright install chromium && npx
      playwright test && npm run kpi`) to confirm pages load and locators resolve, then build your

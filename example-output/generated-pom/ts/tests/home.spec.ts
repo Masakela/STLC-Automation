@@ -5,7 +5,7 @@ test.describe('Home', () => {
   test('REQ-TODO Home renders its key elements', async ({ page }) => {
     const p = new HomePage(page);
     await p.goto();
-    await expect(p.loginLink).toBeVisible();
+    await expect(p.homeLink).toBeVisible();
     // TODO: assert real behavior for this page (fill forms, submit, verify outcomes).
   });
 });

@@ -33,20 +33,43 @@ const ORIGIN = new URL(START).origin;
 const norm = (u) => { try { const x = new URL(u, ORIGIN); x.hash = ''; return x.href.replace(/\/$/, '') || x.origin; } catch (e) { return null; } };
 const esc = (s) => String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 const jesc = (s) => String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-// Locator hierarchy (resilient-first, to minimise flaky tests). Tiers, in order:
-//   testid  -> data-testid / data-test / data-test-id  (getByTestId)
-//   data    -> any other data-* attribute              [data-x="v"]
-//   id      -> #id
-//   class   -> tag.semanticClass(es)                    (utility/hashed classes skipped)
-//   css     -> [name="v"]  >  tag:has-text("…")  >  tag[type]   (always addresses something)
-// Override order (or drop a tier) with --locator-order, e.g. --locator-order testid,id,data,class,css
-const ORDER = arg('locator-order', 'testid,data,id,class,css').split(',').map((s) => s.trim()).filter(Boolean);
+// Locator hierarchy (user-facing first, then resilient hooks, to minimise flaky tests). Tiers, in order:
+//   userfacing -> getByRole(name) / getByLabel / getByPlaceholder / getByText  (how a real user finds it)
+//   testid     -> data-testid / data-test / data-test-id                        (getByTestId)
+//   data       -> any other data-* attribute                                    [data-x="v"]
+//   id         -> #id
+//   class      -> tag.semanticClass(es)                                         (utility/hashed classes skipped)
+//   css        -> [name="v"]  >  tag:has-text("…")  >  tag[type]                (always addresses something)
+// Override order (or drop a tier) with --locator-order, e.g. --locator-order testid,userfacing,data,id,class,css
+const ORDER = arg('locator-order', 'userfacing,testid,data,id,class,css').split(',').map((s) => s.trim()).filter(Boolean);
+// ARIA role -> Java AriaRole enum, for getByRole in the user-facing tier
+const ROLE_JAVA = { link: 'LINK', button: 'BUTTON', textbox: 'TEXTBOX', combobox: 'COMBOBOX', checkbox: 'CHECKBOX', radio: 'RADIO', tab: 'TAB' };
 const UTIL_CLASS = /^(is-|has-|js-|active|open|show|hide|hidden|selected|disabled|focus|hover|ng-|v-|svelte-|css-[0-9a-z]{3,}|sc-[0-9a-z]+|[a-z]+-\d+)$/i;
 const semanticClasses = (cs) => (cs || []).filter((c) => /^[a-zA-Z][\w-]{2,}$/.test(c) && !UTIL_CLASS.test(c) && !/[0-9a-f]{6,}/i.test(c));
 const mk = (strategy, ts, java) => ({ strategy, ts, java });
 
 function tier(kind, e) {
   const nm = (e.text || '').trim().slice(0, 50);
+  if (kind === 'userfacing') {
+    // How a real user (and a screen reader) finds the element: role + accessible name, a form
+    // field's <label>, its placeholder, or visible link/button text. Survives restyles/re-wraps
+    // and doubles as an accessibility check; only fires when a SPECIFIC name is available.
+    const lbl = (e.labelText || '').trim().slice(0, 60);
+    const ph = (e.placeholder || '').trim().slice(0, 60);
+    const isForm = e.role === 'textbox' || e.role === 'combobox' || e.role === 'checkbox' || e.role === 'radio';
+    // 1. form field with an associated <label> -> getByLabel
+    if (isForm && lbl) return mk('label', `getByLabel('${esc(lbl)}')`, `getByLabel("${jesc(lbl)}")`);
+    // 2. element exposing an ARIA role + accessible name -> getByRole({ name })
+    const name = lbl || nm;
+    if (e.role && ROLE_JAVA[e.role] && name) return mk('role',
+      `getByRole('${e.role}', { name: '${esc(name)}' })`,
+      `getByRole(AriaRole.${ROLE_JAVA[e.role]}, new Page.GetByRoleOptions().setName("${jesc(name)}"))`);
+    // 3. form field with a placeholder -> getByPlaceholder
+    if (ph) return mk('placeholder', `getByPlaceholder('${esc(ph)}')`, `getByPlaceholder("${jesc(ph)}")`);
+    // 4. visible link/button text -> getByText
+    if (nm && (e.tag === 'a' || e.tag === 'button')) return mk('text', `getByText('${esc(nm)}')`, `getByText("${jesc(nm)}")`);
+    return null;
+  }
   if (kind === 'testid') return e.testid ? mk('testid', `getByTestId('${esc(e.testid)}')`, `getByTestId("${jesc(e.testid)}")`) : null;
   if (kind === 'data') {
     const k = Object.keys(e.dataAttrs || {}).find((x) => !['data-testid', 'data-test', 'data-test-id'].includes(x));
