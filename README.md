@@ -83,6 +83,12 @@ is upgraded to its real content); pages not re-crawled are kept. It's **optional
 without the MCP tools, the deterministic crawl is used as-is. Test credentials only; never real
 credentials, payments, or destructive actions.
 
+**Running the gated tests signed in.** When the map came from an authenticated crawl,
+`generate-pom.js` wires the session into the generated config (TS `use: { storageState }`, Java
+`setStorageStatePath`), so gated-page tests run logged in. Put the exported `storageState` at
+`auth.json` in the generated TS project (or set `STORAGE_STATE=/path/to/auth.json`); if it's absent
+the suite runs unauthenticated instead of crashing.
+
 Everything lands under a timestamped run folder:
 
 ```

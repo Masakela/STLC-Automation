@@ -32,6 +32,9 @@ cycle: defects mapped to cases and requirements, pass/fail, and a KPI dashboard 
      (`cd <project>/generated-pom/ts && npm install && npx playwright install chromium && npx
      playwright test && npm run kpi`) to confirm pages load and locators resolve, then build your
      test cases on top of these page objects instead of hand-writing selectors.
+     If the map is **authenticated** (from a signed-in crawl), `generate-pom.js` already wires the
+     session into the config — place the exported `auth.json` storageState in the TS project (or set
+     `STORAGE_STATE`) so gated-page tests run signed in; without it they run unauthenticated.
 
 2. **Generate one automated test per automatable case.** Name each test after its `TC ID` +
    title and keep a comment linking the `Req ID`, so results trace back through the RTM.

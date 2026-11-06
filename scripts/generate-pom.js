@@ -4,9 +4,14 @@
  * Model + skeleton tests, in BOTH TypeScript (@playwright/test) and Java (Playwright + TestNG).
  *
  * Usage: node generate-pom.js [--map site-map.json] [--out generated-pom] [--max-locators 40]
+ *                             [--storage-state auth.json]
  *
  * The generated page objects are a reviewed starting point: locators are auto-derived and the
  * test bodies are skeletons (visibility checks + TODOs) — a QA engineer refines the assertions.
+ *
+ * Auth: if the map came from an authenticated crawl (map.authenticated) or --storage-state is
+ * passed, the generated TS/Java config loads that session so gated-page tests run signed in. It
+ * falls back to unauthenticated when the storageState file is absent, so a run never crashes.
  */
 'use strict';
 const fs = require('fs');
@@ -17,6 +22,14 @@ const OUT = arg('out', 'generated-pom');
 const MAXLOC = parseInt(arg('max-locators', '40'), 10);
 
 const map = JSON.parse(fs.readFileSync(MAP, 'utf8'));
+const SS = arg('storage-state', '') || (map.authenticated ? 'auth.json' : '');
+// Java context setup — signed-in when SS is set (guards file existence so it never crashes).
+const jaSetupBody = SS
+  ? `    Browser.NewContextOptions opts = new Browser.NewContextOptions().setBaseURL("${map.origin}");
+    String ss = System.getenv().getOrDefault("STORAGE_STATE", "${SS}");
+    if (ss != null && !ss.isEmpty() && java.nio.file.Files.exists(java.nio.file.Paths.get(ss))) opts.setStorageStatePath(java.nio.file.Paths.get(ss));
+    page = browser.newContext(opts).newPage();`
+  : `    page = browser.newContext(new Browser.NewContextOptions().setBaseURL("${map.origin}")).newPage();`;
 const mkdir = (p) => fs.mkdirSync(p, { recursive: true });
 const tsPages = path.join(OUT, 'ts', 'pages');
 const tsTests = path.join(OUT, 'ts', 'tests');
@@ -109,7 +122,7 @@ public class ${pg.name}Test {
   @BeforeMethod public void setUp() {
     pw = Playwright.create();
     browser = pw.chromium().launch();
-    page = browser.newContext(new Browser.NewContextOptions().setBaseURL("${map.origin}")).newPage();
+${jaSetupBody}
   }
   @AfterMethod public void tearDown() { if (browser != null) browser.close(); if (pw != null) pw.close(); }
 
@@ -127,8 +140,24 @@ public class ${pg.name}Test {
 }
 
 // ---------- make the TS POM a runnable project (so /stlc can auto-run the smoke suite) ----------
-fs.writeFileSync(path.join(OUT, 'ts', 'playwright.config.ts'),
-`import { defineConfig, devices } from '@playwright/test';
+const tsConfig = SS
+  ? `import { defineConfig, devices } from '@playwright/test';
+import fs from 'fs';
+
+// Gated pages need a signed-in session. Point STORAGE_STATE (or the default below) at an
+// authenticated Playwright storageState JSON; if it's missing, tests run unauthenticated instead
+// of crashing, so the suite is green with or without the session file.
+const ssPath = process.env.STORAGE_STATE || '${SS}';
+const storageState = ssPath && fs.existsSync(ssPath) ? ssPath : undefined;
+
+export default defineConfig({
+  testDir: './tests',
+  reporter: [['list'], ['json', { outputFile: 'test-results/results.json' }]],
+  use: { baseURL: process.env.APP_BASE_URL || '${map.origin}', ...(storageState ? { storageState } : {}) },
+  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+});
+`
+  : `import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
@@ -136,7 +165,8 @@ export default defineConfig({
   use: { baseURL: process.env.APP_BASE_URL || '${map.origin}' },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 });
-`);
+`;
+fs.writeFileSync(path.join(OUT, 'ts', 'playwright.config.ts'), tsConfig);
 fs.writeFileSync(path.join(OUT, 'ts', 'package.json'),
   JSON.stringify({ name: 'generated-pom-ts', private: true,
     scripts: { test: 'playwright test', kpi: 'node ../../scripts/kpi-report.js --pw test-results/results.json --out kpis-out' },
@@ -160,6 +190,6 @@ ${summary.join('\n')}
 Locators are auto-derived (user-facing getByRole/getByLabel/getByText > getByTestId > data-* > #id > class > css). They are a
 **reviewed starting point** — confirm the important ones and replace the skeleton assertions with
 real behavior. The STLC pipeline maps each page/flow to requirements and fills these tests.
-`;
+${SS ? `\n## Authenticated run\nThis POM was generated from an authenticated crawl, so the config loads a signed-in session for gated-page tests. Put the \`storageState\` JSON at \`${SS}\` in the TS project (or set \`STORAGE_STATE=/path/to/auth.json\` / the Java env var). If the file is absent, tests run unauthenticated rather than failing.\n` : ''}`;
 fs.writeFileSync(path.join(OUT, 'POM-SUMMARY.md'), md);
 console.error(`Generated ${tsCount} TS + ${jaCount} Java page objects (${locTotal} locators) into ${OUT}/`);
