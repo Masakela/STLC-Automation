@@ -169,3 +169,7 @@ it generates look like the ones you already maintain, and the KPI dashboard is i
 - After a run, review `00-run.md` first — it links everything and flags coverage gaps and
   open questions worth a human decision.
 - Remove the `|| true` from any generated CI once the tests are real, so failures gate the build.
+
+## License
+
+MIT — see [LICENSE](LICENSE). Free to use, modify, and build on, with attribution.
