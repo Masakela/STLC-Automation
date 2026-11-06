@@ -1,0 +1,229 @@
+{
+  "startUrl": "http://localhost:7099/",
+  "origin": "http://localhost:7099",
+  "generatedAt": "2026-11-06T03:40:31.625Z",
+  "pageCount": 6,
+  "pages": [
+    {
+      "name": "Home",
+      "url": "http://localhost:7099",
+      "path": "/",
+      "title": "Shop Home",
+      "elementCount": 6,
+      "elements": [
+        {
+          "field": "loginLink",
+          "role": "link",
+          "text": "Login",
+          "strategy": "class",
+          "ts": "locator('a.nav-link.primary')",
+          "java": "locator(\"a.nav-link.primary\")"
+        },
+        {
+          "field": "productsLink",
+          "role": "link",
+          "text": "Products",
+          "strategy": "css-text",
+          "ts": "locator('a:has-text(\"Products\")')",
+          "java": "locator(\"a:has-text(\\\"Products\\\")\")"
+        },
+        {
+          "field": "searchInput",
+          "role": "textbox",
+          "text": "Search",
+          "strategy": "id",
+          "ts": "locator('#q')",
+          "java": "locator(\"#q\")"
+        },
+        {
+          "field": "searchButton",
+          "role": "button",
+          "text": "Search",
+          "strategy": "testid",
+          "ts": "getByTestId('go')",
+          "java": "getByTestId(\"go\")"
+        },
+        {
+          "field": "signUpButton",
+          "role": "button",
+          "text": "Sign up",
+          "strategy": "data-attr",
+          "ts": "locator('[data-qa=\"newsletter-signup\"]')",
+          "java": "locator(\"[data-qa=\\\"newsletter-signup\\\"]\")"
+        },
+        {
+          "field": "helpCenterLink",
+          "role": "link",
+          "text": "Help center",
+          "strategy": "class",
+          "ts": "locator('a.footer-link')",
+          "java": "locator(\"a.footer-link\")"
+        }
+      ]
+    },
+    {
+      "name": "Login",
+      "url": "http://localhost:7099/login",
+      "path": "/login",
+      "title": "Login",
+      "elementCount": 5,
+      "elements": [
+        {
+          "field": "homeLink",
+          "role": "link",
+          "text": "Home",
+          "strategy": "css-text",
+          "ts": "locator('a:has-text(\"Home\")')",
+          "java": "locator(\"a:has-text(\\\"Home\\\")\")"
+        },
+        {
+          "field": "emailInput",
+          "role": "textbox",
+          "text": "Email",
+          "strategy": "id",
+          "ts": "locator('#email')",
+          "java": "locator(\"#email\")"
+        },
+        {
+          "field": "passwordInput",
+          "role": "textbox",
+          "text": "Password",
+          "strategy": "id",
+          "ts": "locator('#password')",
+          "java": "locator(\"#password\")"
+        },
+        {
+          "field": "signInButton",
+          "role": "button",
+          "text": "Sign in",
+          "strategy": "testid",
+          "ts": "getByTestId('signin')",
+          "java": "getByTestId(\"signin\")"
+        },
+        {
+          "field": "forgotPasswordLink",
+          "role": "link",
+          "text": "Forgot password?",
+          "strategy": "css-text",
+          "ts": "locator('a:has-text(\"Forgot password?\")')",
+          "java": "locator(\"a:has-text(\\\"Forgot password?\\\")\")"
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "url": "http://localhost:7099/products",
+      "path": "/products",
+      "title": "Products",
+      "elementCount": 5,
+      "elements": [
+        {
+          "field": "homeLink",
+          "role": "link",
+          "text": "Home",
+          "strategy": "css-text",
+          "ts": "locator('a:has-text(\"Home\")')",
+          "java": "locator(\"a:has-text(\\\"Home\\\")\")"
+        },
+        {
+          "field": "cartLink",
+          "role": "link",
+          "text": "Cart",
+          "strategy": "testid",
+          "ts": "getByTestId('cart-link')",
+          "java": "getByTestId(\"cart-link\")"
+        },
+        {
+          "field": "sortBySelect",
+          "role": "combobox",
+          "text": "PriceName",
+          "strategy": "id",
+          "ts": "locator('#sort')",
+          "java": "locator(\"#sort\")"
+        },
+        {
+          "field": "addBackpackButton",
+          "role": "button",
+          "text": "Add Backpack",
+          "strategy": "testid",
+          "ts": "getByTestId('add-backpack')",
+          "java": "getByTestId(\"add-backpack\")"
+        },
+        {
+          "field": "addBikeButton",
+          "role": "button",
+          "text": "Add Bike",
+          "strategy": "testid",
+          "ts": "getByTestId('add-bike')",
+          "java": "getByTestId(\"add-bike\")"
+        }
+      ]
+    },
+    {
+      "name": "Help",
+      "url": "http://localhost:7099/help",
+      "path": "/help",
+      "title": "",
+      "elementCount": 0,
+      "elements": []
+    },
+    {
+      "name": "Forgot",
+      "url": "http://localhost:7099/forgot",
+      "path": "/forgot",
+      "title": "Forgot",
+      "elementCount": 3,
+      "elements": [
+        {
+          "field": "homeLink",
+          "role": "link",
+          "text": "Home",
+          "strategy": "css-text",
+          "ts": "locator('a:has-text(\"Home\")')",
+          "java": "locator(\"a:has-text(\\\"Home\\\")\")"
+        },
+        {
+          "field": "emailInput",
+          "role": "textbox",
+          "text": "Email",
+          "strategy": "id",
+          "ts": "locator('#em')",
+          "java": "locator(\"#em\")"
+        },
+        {
+          "field": "sendResetButton",
+          "role": "button",
+          "text": "Send reset",
+          "strategy": "testid",
+          "ts": "getByTestId('reset')",
+          "java": "getByTestId(\"reset\")"
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "url": "http://localhost:7099/cart",
+      "path": "/cart",
+      "title": "Cart",
+      "elementCount": 2,
+      "elements": [
+        {
+          "field": "homeLink",
+          "role": "link",
+          "text": "Home",
+          "strategy": "css-text",
+          "ts": "locator('a:has-text(\"Home\")')",
+          "java": "locator(\"a:has-text(\\\"Home\\\")\")"
+        },
+        {
+          "field": "checkoutButton",
+          "role": "button",
+          "text": "Checkout",
+          "strategy": "testid",
+          "ts": "getByTestId('checkout')",
+          "java": "getByTestId(\"checkout\")"
+        }
+      ]
+    }
+  ]
+}

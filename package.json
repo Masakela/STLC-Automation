@@ -1,0 +1,14 @@
+{
+  "name": "stlc-automation",
+  "version": "1.1.0",
+  "private": true,
+  "description": "STLC automation: analyze a URL → RTM → test plan → cases → complete Page Object Model (TypeScript + Java) → tests → KPI dashboard.",
+  "scripts": {
+    "analyze": "node scripts/analyze-site.js",
+    "pom": "node scripts/generate-pom.js",
+    "kpi": "node scripts/kpi-report.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.47.0"
+  }
+}
